@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undertale:Plan-K - 官方同人游戏</title>
+    <style>
+        /* 自定义字体导入 */
+        @font-face {
+            font-family: 'UITTFont';
+            src: url('fonts/ui.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'UITTFont', 'Segoe UI', Arial, sans-serif;
+            background-color: #0a0a1a;
+            color: #f0f0f0;
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 100, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 20%);
+        }
+        
+        /* 中文字符间距调整 - 仅对中文增加字距 */
+        .chinese-text {
+            letter-spacing: 0.2em !important; /* 中文增加大字距 */
+        }
+        
+        /* 英文保持正常字距 */
+        .english-text {
+            letter-spacing: normal !important;
+        }
+        
+        /* 特殊处理：导航链接保持正常字距 */
+        nav a {
+            letter-spacing: normal !important;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background-color: rgba(10, 10, 26, 0.95);
+            padding: 15px 0;
+            border-bottom: 2px solid #4a6bff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-img {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(74, 107, 255, 0.8));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            color: #4a6bff;
+            text-shadow: 0 0 12px rgba(74, 107, 255, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        .logo-subtext {
+            font-size: 0.9rem;
+            color: #8a2be2;
+            margin-top: -5px;
+            letter-spacing: 2px;
+        }
+        
+        /* 导航样式 */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            color: #e0e0ff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(20, 30, 70, 0.5);
+        }
+        
+        nav a:hover {
+            background-color: rgba(74, 107, 255, 0.7);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.4);
+        }
+        
+        nav a.active {
+            background-color: rgba(74, 107, 255, 0.9);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(74, 107, 255, 0.7);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #4a6bff, #8a2be2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        nav a:hover::after {
+            transform: scaleX(1);
+        }
+        
+        /* 主内容区域 */
+        main {
+            padding: 40px 0;
+            min-height: calc(100vh - 220px);
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(74, 107, 255, 0.5);
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #4a6bff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(74, 107, 255, 0.3);
+        }
+        
+        .page-header p {
+            color: #a0a0ff;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .page-content {
+            background-color: rgba(15, 20, 40, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            border: 1px solid rgba(74, 107, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* 首页特定样式 */
+        /* 轮播区域 */
+        .screenshot-carousel {
+            margin-bottom: 50px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+        }
+        
+        .carousel-slide {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+        
+        .carousel-image {
+            min-width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #0a0a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .carousel-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            pointer-events: none;
+        }
+        
+        .carousel-btn {
+            background-color: rgba(74, 107, 255, 0.8);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .carousel-btn:hover {
+            background-color: rgba(74, 107, 255, 1);
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .carousel-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(74, 107, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background-color: rgba(74, 107, 255, 1);
+            transform: scale(1.3);
+        }
+        
+        /* 图片计数器 */
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        
+        /* 联系我们页面样式 */
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            background-color: rgba(25, 30, 60, 0.8);
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 4px solid #4a6bff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(74, 107, 255, 0.2);
+        }
+        
+        .contact-role {
+            font-size: 1.3rem;
+            color: #8a2be2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-name {
+            font-size: 1.5rem;
+            color: #4a6bff;
+            margin-bottom: 15px;
+        }
+        
+        .bilibili-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(251, 114, 153, 0.1);
+            color: #fb7299;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(251, 114, 153, 0.3);
+        }
+        
+        .bilibili-link:hover {
+            background-color: rgba(251, 114, 153, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(251, 114, 153, 0.3);
+        }
+        
+        .bilibili-icon {
+            color: #fb7299;
+            font-size: 1.3rem;
+        }
+        
+        /* 其他页面内容占位符 */
+        .content-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+        
+        .content-placeholder i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4a6bff;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background-color: rgba(10, 10, 26, 0.95);
+            padding: 30px 0;
+            border-top: 2px solid #4a6bff;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-logo {
+            height: 50px;
+            filter: drop-shadow(0 0 5px rgba(74, 107, 255, 0.5));
+        }
+        
+        .footer-info p {
+            color: #a0a0ff;
+            margin-bottom: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(74, 107, 255, 0.3);
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 特殊样式 */
+        .undertale-theme {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+            background: 
+                radial-gradient(circle at 20% 30%, #4a6bff 0%, transparent 10%),
+                radial-gradient(circle at 80% 70%, #8a2be2 0%, transparent 10%),
+                radial-gradient(circle at 40% 80%, #00bfff 0%, transparent 10%);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            nav a {
+                padding: 8px 15px;
+                font-size: 1rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .carousel-container {
+                height: 350px;
+            }
+            
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                padding: 10px;
+            }
+            
+            .contact-item {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav ul {
+                gap: 5px;
+            }
+            
+            nav a {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .carousel-container {
+                height: 250px;
+            }
+        }
+    </style>
+    <!-- Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Undertale主题背景 -->
+    <div class="undertale-theme"></div>
+    
+    <!-- 头部区域 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="imgs/upklogo.png" alt="Undertale:Plan-K Logo" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/200x60/4a6bff/ffffff?text=Plan-K+Logo'">
+                    <div>
+                        <div class="logo-text">Undertale:Plan-K</div>
+                        <div class="logo-subtext">同人游戏官方网站</div>
+                    </div>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="home">首页</a></li>
+                        <li><a href="#" class="nav-link" data-page="updates">更新动态</a></li>
+                        <li><a href="#" class="nav-link" data-page="download">下载链接</a></li>
+                        <li><a href="#" class="nav-link" data-page="story">游戏剧情</a></li>
+                        <li><a href="#" class="nav-link" data-page="contact">联系我们</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区域 -->
+    <main>
+        <div class="container">
+            <!-- 首页 -->
+            <section id="home" class="page active">
+                <div class="page-header">
+                    <h1>欢迎来到 Undertale:Plan-K！</h1>
+                </div>
+                
+                <!-- 游戏截图轮播 -->
+                <div class="screenshot-carousel">
+                    <div class="carousel-container">
+                        <div class="carousel-slide" id="carouselSlide">
+                            <!-- 图片将通过JavaScript动态加载 -->
+                        </div>
+                        
+                        <!-- 图片计数器 -->
+                        <div class="image-counter" id="imageCounter">1 / 0</div>
+                        
+                        <!-- 控制按钮 -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn" id="prevBtn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-btn" id="nextBtn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="carousel-dots" id="carouselDots">
+                        <!-- 点状指示器将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 更新动态 -->
+            <section id="updates" class="page">
+                <div class="page-header">
+                    <h1>更新动态</h1>
+                    <p>关注游戏开发进度和最新消息</p>
+                </div>
+                <div class="page-content">
+                    <div class="content-placeholder">
+                        <i class="fas fa-newspaper"></i>
+                        <p>更新动态内容区域 - 这里将展示游戏开发日志、版本更新和公告</p>
+                        <p>开发团队会定期在这里发布游戏开发进展和最新动态</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 下载链接 -->
+            <section id="download" class="page">
+                <div class="page-header">
+                    <h1>下载链接</h1>
+                    <p>获取游戏客户端和最新版本</p>
+                </div>
+                <div class="page-content">
+                    <div class="content-placeholder">
+                        <i class="fas fa-download"></i>
+                        <p>下载链接内容区域 - 这里将提供游戏下载链接和安装说明</p>
+                        <p>包括Windows、Mac和Linux版本的游戏客户端下载</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 游戏剧情 -->
+            <section id="story" class="page">
+                <div class="page-header">
+                    <h1>游戏剧情</h1>
+                    <p>探索Plan-K的独特故事线和角色</p>
+                </div>
+                <div class="page-content">
+                    <div class="content-placeholder">
+                        <i class="fas fa-book-open"></i>
+                        <p>游戏剧情内容区域 - 这里将介绍游戏背景故事、角色和世界观</p>
+                        <p>了解这个Undertale同人游戏的全新剧情和角色设定</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 联系我们 -->
+            <section id="contact" class="page">
+                <div class="page-header">
+                    <h1>联系我们</h1>
+                    <p>与开发团队取得联系，反馈问题或提供建议</p>
+                </div>
+                <div class="page-content">
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <div class="contact-role">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>主创 & 美术</span>
+                            </div>
+                            <div class="contact-name">Kais-sans</div>
+                            <a href="https://space.bilibili.com/1185963426?spm_id_from=333.337.0.0" target="_blank" class="bilibili-link">
+                                <i class="fab fa-bilibili bilibili-icon"></i>
+                                <span>B站主页：https://space.bilibili.com/1185963426</span>
+                            </a>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-role">
+                                <i class="fas fa-music"></i>
+                                <span>音乐 & 编程</span>
+                            </div>
+                            <div class="contact-name">SHENG</div>
+                            <a href="https://space.bilibili.com/1888569246?spm_id_from=333.337.0.0" target="_blank" class="bilibili-link">
+                                <i class="fab fa-bilibili bilibili-icon"></i>
+                                <span>B站主页：https://space.bilibili.com/1888569246</span>
+                            </a>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-role">
+                                <i class="fas fa-gamepad"></i>
+                                <span>游戏设计 & PV制作</span>
+                            </div>
+                            <div class="contact-name">下午茶点-</div>
+                            <a href="https://space.bilibili.com/1286612849?spm_id_from=333.337.0.0" target="_blank" class="bilibili-link">
+                                <i class="fab fa-bilibili bilibili-icon"></i>
+                                <span>B站主页：https://space.bilibili.com/1286612849</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(74, 107, 255, 0.3);">
+                        <h3 style="color: #4a6bff; margin-bottom: 15px;">反馈与建议</h3>
+                        <p>如果您对游戏有任何建议或发现了bug，欢迎通过以上B站账号联系我们！</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- 页脚区域 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <img src="imgs/upklogo.png" alt="Undertale:Plan-K Logo" class="footer-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x50/4a6bff/ffffff?text=Plan-K'">
+                <div class="footer-info">
+                    <p>Undertale:Plan-K 同人游戏项目</p>
+                    <p>基于 Undertale 世界观创作的非官方作品</p>
+                    <p>Undertale © Toby Fox</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 Undertale:Plan-K 开发团队 | 本网站为同人作品，与官方无关</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 页面导航功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            
+            // 为每个导航链接添加点击事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取目标页面ID
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    // 更新导航链接活动状态
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示目标页面，隐藏其他页面
+                    pages.forEach(page => {
+                        page.classList.remove('active');
+                        if (page.id === targetPage) {
+                            page.classList.add('active');
+                        }
+                    });
+                    
+                    // 如果切换到首页，确保轮播图正常工作
+                    if (targetPage === 'home') {
+                        // 重新初始化轮播图，但使用更简单的方法
+                        setTimeout(initSimpleCarousel, 100);
+                    }
+                });
+            });
+            
+            // 初始化轮播图 - 使用简化方法
+            initSimpleCarousel();
+            
+            // 字体检测
+            checkFont();
+            
+            // 处理中英文混合文本的字距
+            processChineseText();
+        });
+        
+        // 处理中英文混合文本的字距
+        function processChineseText() {
+            // 获取所有文本节点
+            const walker = document.createTreeWalker(
+                document.body,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+            
+            let node;
+            const nodesToProcess = [];
+            
+            // 收集所有文本节点
+            while (node = walker.nextNode()) {
+                if (node.nodeValue.trim().length > 0) {
+                    nodesToProcess.push(node);
+                }
+            }
+            
+            // 处理每个文本节点
+            nodesToProcess.forEach(textNode => {
+                const text = textNode.nodeValue;
+                const parent = textNode.parentNode;
+                
+                // 检查是否包含中文
+                if (/[\u4e00-\u9fff]/.test(text)) {
+                    // 分割文本为中文字符和其他字符
+                    const segments = [];
+                    let currentSegment = '';
+                    let currentIsChinese = false;
+                    
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        const isChinese = /[\u4e00-\u9fff]/.test(char);
+                        
+                        if (i === 0) {
+                            currentSegment = char;
+                            currentIsChinese = isChinese;
+                        } else if (isChinese === currentIsChinese) {
+                            currentSegment += char;
+                        } else {
+                            segments.push({
+                                text: currentSegment,
+                                isChinese: currentIsChinese
+                            });
+                            currentSegment = char;
+                            currentIsChinese = isChinese;
+                        }
+                    }
+                    
+                    // 添加最后一个片段
+                    if (currentSegment) {
+                        segments.push({
+                            text: currentSegment,
+                            isChinese: currentIsChinese
+                        });
+                    }
+                    
+                    // 如果只有一种类型的字符，不需要处理
+                    if (segments.length === 1) {
+                        if (segments[0].isChinese) {
+                            const span = document.createElement('span');
+                            span.className = 'chinese-text';
+                            span.textContent = segments[0].text;
+                            parent.replaceChild(span, textNode);
+                        }
+                    } else if (segments.length > 1) {
+                        // 创建多个span元素
+                        const fragment = document.createDocumentFragment();
+                        segments.forEach(segment => {
+                            if (segment.text.trim()) {
+                                const span = document.createElement('span');
+                                span.className = segment.isChinese ? 'chinese-text' : 'english-text';
+                                span.textContent = segment.text;
+                                fragment.appendChild(span);
+                            }
+                        });
+                        
+                        parent.replaceChild(fragment, textNode);
+                    }
+                }
+            });
+            
+            // 特别处理一些特定元素，避免处理导航等不需要中文样式的地方
+            document.querySelectorAll('nav a, .logo-text, .logo-subtext').forEach(el => {
+                el.classList.remove('chinese-text');
+                el.classList.add('english-text');
+            });
+        }
+        
+        // 简化的轮播图功能
+        function initSimpleCarousel() {
+            const carouselSlide = document.getElementById('carouselSlide');
+            const carouselDots = document.getElementById('carouselDots');
+            const imageCounter = document.getElementById('imageCounter');
+            
+            if (!carouselSlide) return;
+            
+            // 清空轮播图内容
+            carouselSlide.innerHTML = '';
+            
+            // 创建一些占位图片
+            for (let i = 1; i <= 3; i++) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'carousel-image';
+                
+                const img = document.createElement('img');
+                // 使用相对路径
+                img.src = `imgs/screenshots/${i.toString().padStart(2, '0')}.png`;
+                img.alt = `Undertale:Plan-K 游戏截图 ${i}`;
+                img.onerror = function() {
+                    // 如果图片加载失败，显示占位符
+                    this.style.display = 'none';
+                    const placeholder = document.createElement('div');
+                    placeholder.textContent = `游戏截图 ${i}`;
+                    placeholder.style.color = '#888';
+                    placeholder.style.fontSize = '1.5rem';
+                    placeholder.style.padding = '20px';
+                    placeholder.style.textAlign = 'center';
+                    imgContainer.appendChild(placeholder);
+                };
+                
+                imgContainer.appendChild(img);
+                carouselSlide.appendChild(imgContainer);
+            }
+            
+            // 等待图片加载完成后再设置控制
+            setTimeout(() => {
+                setupCarouselControls();
+            }, 500);
+        }
+        
+        function setupCarouselControls() {
+            const carouselSlide = document.getElementById('carouselSlide');
+            const carouselImages = document.querySelectorAll('.carousel-image');
+            const carouselDots = document.getElementById('carouselDots');
+            const imageCounter = document.getElementById('imageCounter');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (!carouselSlide || carouselImages.length === 0) return;
+            
+            let counter = 0;
+            const totalImages = carouselImages.length;
+            
+            // 设置轮播图初始位置
+            updateCarousel();
+            
+            // 创建点状指示器
+            carouselDots.innerHTML = '';
+            for (let i = 0; i < totalImages; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    counter = i;
+                    updateCarousel();
+                });
+                carouselDots.appendChild(dot);
+            }
+            
+            // 下一张按钮
+            nextBtn.addEventListener('click', () => {
+                if (counter >= totalImages - 1) counter = -1;
+                counter++;
+                updateCarousel();
+            });
+            
+            // 上一张按钮
+            prevBtn.addEventListener('click', () => {
+                if (counter <= 0) counter = totalImages;
+                counter--;
+                updateCarousel();
+            });
+            
+            // 自动轮播
+            let autoSlide = setInterval(() => {
+                if (counter >= totalImages - 1) counter = -1;
+                counter++;
+                updateCarousel();
+            }, 4000);
+            
+            // 鼠标悬停时暂停自动轮播
+            carouselSlide.addEventListener('mouseenter', () => {
+                clearInterval(autoSlide);
+            });
+            
+            // 鼠标离开时恢复自动轮播
+            carouselSlide.addEventListener('mouseleave', () => {
+                autoSlide = setInterval(() => {
+                    if (counter >= totalImages - 1) counter = -1;
+                    counter++;
+                    updateCarousel();
+                }, 4000);
+            });
+            
+            // 更新轮播图位置
+            function updateCarousel() {
+                const size = carouselImages[0].clientWidth;
+                carouselSlide.style.transform = 'translateX(' + (-size * counter) + 'px)';
+                
+                // 更新点状指示器
+                document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                    if (index === counter) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // 更新计数器
+                if (imageCounter) {
+                    imageCounter.textContent = `${counter + 1} / ${totalImages}`;
+                }
+            }
+            
+            // 窗口大小变化时调整轮播图
+            window.addEventListener('resize', () => {
+                updateCarousel();
+            });
+        }
+        
+        // 字体检测
+        function checkFont() {
+            const originalFont = 'UITTFont';
+            const backupFonts = ['Segoe UI', 'Arial', 'sans-serif'];
+            
+            // 检查自定义字体是否加载成功
+            setTimeout(() => {
+                const testElement = document.createElement('span');
+                testElement.style.fontFamily = originalFont;
+                testElement.style.fontSize = '40px';
+                testElement.style.position = 'absolute';
+                testElement.style.left = '-9999px';
+                testElement.innerHTML = 'mmmmmmmmmlllllllliiiiiii';
+                document.body.appendChild(testElement);
+                
+                const originalWidth = testElement.offsetWidth;
+                
+                testElement.style.fontFamily = backupFonts.join(', ');
+                const backupWidth = testElement.offsetWidth;
+                
+                document.body.removeChild(testElement);
+                
+                // 如果宽度相同，说明自定义字体未加载成功
+                if (originalWidth === backupWidth) {
+                    document.body.style.fontFamily = backupFonts.join(', ');
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
